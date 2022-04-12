@@ -737,6 +737,7 @@ class AttentionLayers(nn.Module):
         causal = False,
         cross_attend = False,
         only_cross = False,
+        cross_causal = False,
         use_scalenorm = False,
         use_rmsnorm = False,
         use_rezero = False,
@@ -809,6 +810,7 @@ class AttentionLayers(nn.Module):
         self.residual_attn = residual_attn
         self.cross_residual_attn = cross_residual_attn
         self.cross_attend = cross_attend
+        self.cross_causal = cross_causal
 
         norm_class = ScaleNorm if use_scalenorm else nn.LayerNorm
         norm_class = RMSNorm if use_rmsnorm else norm_class
@@ -875,7 +877,7 @@ class AttentionLayers(nn.Module):
             if layer_type == 'a':
                 layer = Attention(dim, heads = heads, causal = causal, **attn_kwargs)
             elif layer_type == 'c':
-                layer = Attention(dim, heads = heads, **attn_kwargs)
+                layer = Attention(dim, heads = heads, causal = cross_causal, **attn_kwargs)
             elif layer_type == 'f':
                 layer = FeedForward(dim, **ff_kwargs)
                 layer = layer if not macaron else Scale(0.5, layer)

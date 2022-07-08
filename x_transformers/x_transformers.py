@@ -744,6 +744,7 @@ class AttentionLayers(nn.Module):
         cross_attend = False,
         only_cross = False,
         cross_causal = False,
+        no_attn = False,
         use_scalenorm = False,
         use_rmsnorm = False,
         use_rezero = False,
@@ -825,7 +826,9 @@ class AttentionLayers(nn.Module):
         norm_fn = nn.Identity if use_rezero else norm_fn
         branch_fn = Rezero if use_rezero else None
 
-        if cross_attend and not only_cross:
+        if no_attn:
+            default_block = ('f',)
+        elif cross_attend and not only_cross:
             default_block = ('a', 'c', 'f')
         elif cross_attend and only_cross:
             default_block = ('c', 'f')
